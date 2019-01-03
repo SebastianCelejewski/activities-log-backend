@@ -2,14 +2,14 @@
   "openapi": "3.0.1",
   "info": {
     "title": "activity-log",
-    "version": "2019-01-03T12:37:06Z"
+    "version": "2019-01-03T12:37:18Z"
   },
   "servers": [
     {
       "url": "https://c4mpyiczgd.execute-api.eu-central-1.amazonaws.com/{basePath}",
       "variables": {
         "basePath": {
-          "default": "/dev"
+          "default": "/test"
         }
       }
     }
