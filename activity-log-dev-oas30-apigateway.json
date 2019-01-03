@@ -1,0 +1,166 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "activity-log",
+    "version": "2019-01-02T19:47:07Z"
+  },
+  "servers": [
+    {
+      "url": "https://c4mpyiczgd.execute-api.eu-central-1.amazonaws.com/{basePath}",
+      "variables": {
+        "basePath": {
+          "default": "/dev"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/activities": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "credentials": "arn:aws:iam::953201351151:role/sebcel-activitylog-dynamodb-test",
+          "uri": "arn:aws:apigateway:eu-central-1:dynamodb:path//",
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'"
+              },
+              "responseTemplates": {
+                "application/json": "#set($inputRoot = $input.path('$'))\n[#foreach($elem in $inputRoot.Items)\n{\n  \"id\" : \"$elem.id.S\",\n  \"date\" : \"$elem.date.S\",\n  \"user\" : \"$elem.user.S\",\n  \"type\" : \"$elem.type.S\",\n  \"description\" : \"$elem.description.S\",\n  \"duration\" : $elem.duration.N\n}\n#if($foreach.hasNext),#end\n#end\n]"
+              }
+            }
+          },
+          "requestParameters": {
+            "integration.request.header.X-Amz-Target": "'DynamoDB_20120810.Scan'",
+            "integration.request.header.Content-Type": "'application/x-amz-json-1.0'"
+          },
+          "requestTemplates": {
+            "application/json": "{\n    \"TableName\": \"${stageVariables.tableName}\"\n}"
+          },
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
+          "type": "aws"
+        }
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "credentials": "arn:aws:iam::953201351151:role/sebcel-activitylog-dynamodb-test",
+          "uri": "arn:aws:apigateway:eu-central-1:dynamodb:path//",
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'"
+              }
+            }
+          },
+          "requestParameters": {
+            "integration.request.header.X-Amz-Target": "'DynamoDB_20111205.PutItem'",
+            "integration.request.header.Content-Type": "'application/x-amz-json-1.0'"
+          },
+          "requestTemplates": {
+            "application/json": "#set($inputRoot = $input.path('$'))\n{\n    \"TableName\": \"activity-log-dev\",\n    \"Item\": {\n        \"id\": { \"S\": \"${inputRoot.id}\" },\n      \t\"date\": { \"S\": \"${inputRoot.date}\" },\n       \t\"type\": { \"S\": \"${inputRoot.type}\" },\n       \t\"user\": { \"S\": \"${inputRoot.user}\" },\n       \t\"description\": { \"S\": \"${inputRoot.description}\" },\n       \t\"duration\": { \"N\": \"${inputRoot.duration}\"}\n    }\n}"
+          },
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
+          "type": "aws"
+        }
+      },
+      "options": {
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Empty"
+                }
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "responses": {
+            "default": {
+              "statusCode": "200",
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Methods": "'POST,GET,OPTIONS'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Origin": "'*'"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "{\"statusCode\": 200}"
+          },
+          "passthroughBehavior": "when_no_match",
+          "type": "mock"
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Empty": {
+        "title": "Empty Schema",
+        "type": "object"
+      }
+    }
+  }
+}
