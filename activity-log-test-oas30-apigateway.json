@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "activity-log",
-    "version": "2019-01-03T14:21:33Z"
+    "version": "2019-01-05T10:53:56Z"
   },
   "servers": [
     {
@@ -17,6 +17,16 @@
   "paths": {
     "/activities": {
       "get": {
+        "parameters": [
+          {
+            "name": "user",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "200 response",
@@ -36,6 +46,7 @@
             }
           }
         },
+        "x-amazon-apigateway-request-validator": "Validate query string parameters and headers",
         "x-amazon-apigateway-integration": {
           "credentials": "arn:aws:iam::953201351151:role/sebcel-activitylog-dynamodb-${stageVariables.stageName}",
           "uri": "arn:aws:apigateway:eu-central-1:dynamodb:path//",
@@ -55,7 +66,7 @@
             "integration.request.header.Content-Type": "'application/x-amz-json-1.0'"
           },
           "requestTemplates": {
-            "application/json": "{\n    \"TableName\": \"activity-log-${stageVariables.stageName}\"\n}"
+            "application/json": "{\n    \"TableName\": \"activity-log-${stageVariables.stageName}\",\n    \"FilterExpression\": \"#c = :val\",\n    \"ExpressionAttributeValues\": {\":val\": {\"S\": \"$input.params('user')\"}},\n    \"ExpressionAttributeNames\": {\"#c\": \"user\"}\n}"
           },
           "passthroughBehavior": "when_no_templates",
           "httpMethod": "POST",
@@ -265,6 +276,12 @@
         "title": "Empty Schema",
         "type": "object"
       }
+    }
+  },
+  "x-amazon-apigateway-request-validators": {
+    "Validate query string parameters and headers": {
+      "validateRequestParameters": true,
+      "validateRequestBody": false
     }
   }
 }
