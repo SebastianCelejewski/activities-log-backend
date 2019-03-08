@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "activity-log",
-    "version": "2019-01-13T11:32:16Z"
+    "version": "2019-03-08T08:15:40Z"
   },
   "servers": [
     {
@@ -36,6 +36,14 @@
             }
           }
         },
+        "security": [
+          {
+            "activity-log-cognito-authorizer-test": []
+          },
+          {
+            "api_key": []
+          }
+        ],
         "x-amazon-apigateway-integration": {
           "uri": "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-central-1:953201351151:function:sebcel-activitylog-GetDuties-${stageVariables.stageName}/invocations",
           "responses": {
@@ -72,6 +80,14 @@
             }
           }
         },
+        "security": [
+          {
+            "activity-log-cognito-authorizer-test": []
+          },
+          {
+            "api_key": []
+          }
+        ],
         "x-amazon-apigateway-integration": {
           "uri": "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-central-1:953201351151:function:sebcel-activitylog-SaveDutyData-${stageVariables.stageName}/invocations",
           "responses": {
@@ -134,6 +150,14 @@
             }
           }
         },
+        "security": [
+          {
+            "activity-log-cognito-authorizer-test": []
+          },
+          {
+            "api_key": []
+          }
+        ],
         "x-amazon-apigateway-request-validator": "Validate query string parameters and headers",
         "x-amazon-apigateway-integration": {
           "uri": "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-central-1:953201351151:function:sebcel-activitylog-DeleteDutyData-${stageVariables.stageName}/invocations",
@@ -192,10 +216,10 @@
               }
             }
           },
+          "passthroughBehavior": "when_no_match",
           "requestTemplates": {
             "application/json": "{\"statusCode\": 200}"
           },
-          "passthroughBehavior": "when_no_match",
           "type": "mock"
         }
       }
@@ -231,6 +255,14 @@
             }
           }
         },
+        "security": [
+          {
+            "activity-log-cognito-authorizer-test": []
+          },
+          {
+            "api_key": []
+          }
+        ],
         "x-amazon-apigateway-request-validator": "Validate query string parameters and headers",
         "x-amazon-apigateway-integration": {
           "credentials": "arn:aws:iam::953201351151:role/sebcel-activitylog-dynamodb-${stageVariables.stageName}",
@@ -250,11 +282,11 @@
             "integration.request.header.X-Amz-Target": "'DynamoDB_20120810.Scan'",
             "integration.request.header.Content-Type": "'application/x-amz-json-1.0'"
           },
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
           "requestTemplates": {
             "application/json": "{\n    \"TableName\": \"activity-log-${stageVariables.stageName}\",\n    \"FilterExpression\": \"#c = :val\",\n    \"ExpressionAttributeValues\": {\":val\": {\"S\": \"$input.params('user')\"}},\n    \"ExpressionAttributeNames\": {\"#c\": \"user\"}\n}"
           },
-          "passthroughBehavior": "when_no_templates",
-          "httpMethod": "POST",
           "type": "aws"
         }
       },
@@ -278,6 +310,14 @@
             }
           }
         },
+        "security": [
+          {
+            "activity-log-cognito-authorizer-test": []
+          },
+          {
+            "api_key": []
+          }
+        ],
         "x-amazon-apigateway-integration": {
           "credentials": "arn:aws:iam::953201351151:role/sebcel-activitylog-dynamodb-${stageVariables.stageName}",
           "uri": "arn:aws:apigateway:eu-central-1:dynamodb:path//",
@@ -293,11 +333,11 @@
             "integration.request.header.X-Amz-Target": "'DynamoDB_20111205.PutItem'",
             "integration.request.header.Content-Type": "'application/x-amz-json-1.0'"
           },
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
           "requestTemplates": {
             "application/json": "#set($inputRoot = $input.path('$'))\n{\n    \"TableName\": \"activity-log-${stageVariables.stageName}\",\n    \"Item\": {\n        \"id\": { \"S\": \"${inputRoot.id}\" },\n      \t\"date\": { \"S\": \"${inputRoot.date}\" },\n       \t\"type\": { \"S\": \"${inputRoot.type}\" },\n       \t\"user\": { \"S\": \"${inputRoot.user}\" },\n       \t\"description\": { \"S\": \"${inputRoot.description}\" },\n       \t\"duration\": { \"N\": \"${inputRoot.duration}\"}\n    }\n}"
           },
-          "passthroughBehavior": "when_no_templates",
-          "httpMethod": "POST",
           "type": "aws"
         }
       },
@@ -342,10 +382,10 @@
               }
             }
           },
+          "passthroughBehavior": "when_no_match",
           "requestTemplates": {
             "application/json": "{\"statusCode\": 200}"
           },
-          "passthroughBehavior": "when_no_match",
           "type": "mock"
         }
       }
@@ -371,6 +411,14 @@
             }
           }
         },
+        "security": [
+          {
+            "activity-log-cognito-authorizer-test": []
+          },
+          {
+            "api_key": []
+          }
+        ],
         "x-amazon-apigateway-integration": {
           "uri": "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-central-1:953201351151:function:sebcel-activitylog-GetDutyTypes-${stageVariables.stageName}/invocations",
           "responses": {
@@ -431,10 +479,10 @@
               }
             }
           },
+          "passthroughBehavior": "when_no_match",
           "requestTemplates": {
             "application/json": "{\"statusCode\": 200}"
           },
-          "passthroughBehavior": "when_no_match",
           "type": "mock"
         }
       }
@@ -470,6 +518,14 @@
             }
           }
         },
+        "security": [
+          {
+            "activity-log-cognito-authorizer-test": []
+          },
+          {
+            "api_key": []
+          }
+        ],
         "x-amazon-apigateway-integration": {
           "credentials": "arn:aws:iam::953201351151:role/sebcel-activitylog-dynamodb-${stageVariables.stageName}",
           "uri": "arn:aws:apigateway:eu-central-1:dynamodb:path//",
@@ -486,11 +542,11 @@
             "integration.request.header.X-Amz-Target": "'DynamoDB_20120810.DeleteItem'",
             "integration.request.header.Content-Type": "'application/x-amz-json-1.0'"
           },
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
           "requestTemplates": {
             "application/json": "{\r\n    \"TableName\": \"activity-log-${stageVariables.stageName}\",\r\n    \"Key\": {\r\n        \"id\": {\r\n            \"S\": \"${method.request.path.id}\"\r\n        }\r\n    }\r\n}"
           },
-          "passthroughBehavior": "when_no_templates",
-          "httpMethod": "POST",
           "type": "aws"
         }
       },
@@ -535,10 +591,10 @@
               }
             }
           },
+          "passthroughBehavior": "when_no_match",
           "requestTemplates": {
             "application/json": "{\"statusCode\": 200}"
           },
-          "passthroughBehavior": "when_no_match",
           "type": "mock"
         }
       }
@@ -550,7 +606,45 @@
         "title": "Empty Schema",
         "type": "object"
       }
+    },
+    "securitySchemes": {
+      "api_key": {
+        "type": "apiKey",
+        "name": "x-api-key",
+        "in": "header"
+      },
+      "activity-log-cognito-authorizer-test": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header",
+        "x-amazon-apigateway-authtype": "cognito_user_pools",
+        "x-amazon-apigateway-authorizer": {
+          "providerARNs": [
+            "arn:aws:cognito-idp:eu-central-1:953201351151:userpool/eu-central-1_88sJxaawH"
+          ],
+          "type": "cognito_user_pools"
+        }
+      }
     }
+  },
+  "x-amazon-apigateway-policy": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": "*",
+        "Action": "execute-api:Invoke",
+        "Resource": "arn:aws:execute-api:eu-central-1:953201351151:c4mpyiczgd/*/*/*",
+        "Condition": {
+          "IpAddress": {
+            "aws:SourceIp": [
+              "77.67.107.102",
+              "89.66.87.75"
+            ]
+          }
+        }
+      }
+    ]
   },
   "x-amazon-apigateway-request-validators": {
     "Validate query string parameters and headers": {
