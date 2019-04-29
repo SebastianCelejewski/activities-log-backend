@@ -83,31 +83,125 @@
         "CreateDutyTypeFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
-
+                "Code": {
+                    "S3Bucket": "sebcel-activity-log-backend-sources",
+                    "S3Key": "CreateDutyTypeFunction.js"
+                },
+                "Handler": "index.handler",
+                "Runtime": "nodejs8.10",
+                "Timeout": 60,
+                "MemorySize": 128,
+                "Role": { "Fn::GetAtt": ["LambdaExecutionRole", "Arn"]}
             }
         },
         "GetDutyTypesFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
-
+                "Code": {
+                    "S3Bucket": "sebcel-activity-log-backend-sources",
+                    "S3Key": "GetDutyTypesFunction.js"
+                },
+                "Handler": "index.handler",
+                "Runtime": "nodejs8.10",
+                "Timeout": 60,
+                "MemorySize": 128,
+                "Role": { "Fn::GetAtt": ["LambdaExecutionRole", "Arn"]}
             }
         },
         "GetDutiesFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
-
+                "Code": {
+                    "S3Bucket": "sebcel-activity-log-backend-sources",
+                    "S3Key": "GetDutiesFunction.js"
+                },
+                "Handler": "index.handler",
+                "Runtime": "nodejs8.10",
+                "Timeout": 60,
+                "MemorySize": 128,
+                "Role": { "Fn::GetAtt": ["LambdaExecutionRole", "Arn"]}
             }
         },
         "SaveDutyDataFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
-
+                "Code": {
+                    "S3Bucket": "sebcel-activity-log-backend-sources",
+                    "S3Key": "SaveDutyDataFunction.js"
+                },
+                "Handler": "index.handler",
+                "Runtime": "nodejs8.10",
+                "Timeout": 60,
+                "MemorySize": 128,
+                "Role": { "Fn::GetAtt": ["LambdaExecutionRole", "Arn"]}
             }
         },
         "DeleteDutyDataFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
-
+                "Code": {
+                    "S3Bucket": "sebcel-activity-log-backend-sources",
+                    "S3Key": "DeleteDutyDataFunction.js"
+                },
+                "Handler": "index.handler",
+                "Runtime": "nodejs8.10",
+                "Timeout": 60,
+                "MemorySize": 128,
+                "Role": { "Fn::GetAtt": ["LambdaExecutionRole", "Arn"]}
+            }
+        },
+        "LambdaExecutionRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": ["lambda.amazonaws.com"]
+                            },
+                            "Action": ["sts:AssumeRole"]
+                        }
+                    ]
+                },
+                "Path": "/"
+            }
+        },
+        "LambdaExecutionPolicy": {
+            "DependsOn": [
+                "LambdaExecutionRole"
+            ],
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "Allows Lambda function to access ActivityLog tables in DynamoDB",
+                "Roles": [
+                    {"Ref": "LambdaExecutionRole"}
+                ],
+                "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": ["logs:*"],
+                            "Resource": ["arn:aws:logs:*:*:*"]
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "dynamodb:PutItem",
+                                "dynamodb:GetItem",
+                                "dynamodb:Scan",
+                                "dynamodb:DeleteItem"
+                            ],
+                            "Resource": [ 
+                                { "Ref": "ActivitiesTable"},
+                                { "Ref": "DutiesTable"},
+                                { "Ref": "DutyTypesTable"}
+                            ]
+                        }
+                    ]
+                }
             }
         }
     }
