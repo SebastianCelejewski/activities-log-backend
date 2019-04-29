@@ -174,7 +174,7 @@
             ],
             "Type": "AWS::IAM::Policy",
             "Properties": {
-                "PolicyName": "Allows Lambda function to access ActivityLog tables in DynamoDB",
+                "PolicyName": "sebcel-activity-log-access-dynamodb-tables",
                 "Roles": [
                     {"Ref": "LambdaExecutionRole"}
                 ],
@@ -194,10 +194,10 @@
                                 "dynamodb:Scan",
                                 "dynamodb:DeleteItem"
                             ],
-                            "Resource": [ 
-                                { "Ref": "ActivitiesTable"},
-                                { "Ref": "DutiesTable"},
-                                { "Ref": "DutyTypesTable"}
+                            "Resource": [
+                                { "Fn::GetAtt": ["ActivitiesTable", "Arn"]},
+                                { "Fn::GetAtt": ["DutiesTable", "Arn"]},
+                                { "Fn::GetAtt": ["DutyTypesTable", "Arn"]}
                             ]
                         }
                     ]

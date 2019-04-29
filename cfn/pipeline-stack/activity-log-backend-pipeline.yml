@@ -185,6 +185,7 @@ Resources:
   CFNRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: sebcel-activity-log-backend-cloudformation-role
       AssumeRolePolicyDocument:
         Statement:
         - Action: ['sts:AssumeRole']
@@ -194,7 +195,7 @@ Resources:
         Version: '2012-10-17'
       Path: /
       Policies:
-        - PolicyName: CloudFormationRole
+        - PolicyName: sebcel-activity-log-backend-cloudformation-policy
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -203,12 +204,22 @@ Resources:
                 - 'dynamodb:CreateTable'
                 - 'dynamodb:DeleteTable'
                 - 'iam:CreateRole'
+                - 'iam:GetRole'
+                - 'iam:DeleteRole'
+                - 'iam:PassRole'
+                - 'iam:PutRolePolicy'
+                - 'iam:DeleteRolePolicy'
+                - 'lambda:CreateFunction'
                 Effect: Allow
                 Resource: '*'
-              
+              - Action:
+                - 's3:GetObject'
+                Effect: Allow
+                Resource: 'arn:aws:s3:::sebcel-activity-log-backend-sources/*'              
   PipelineRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: sebcel-activity-log-backend-pipeline-role
       AssumeRolePolicyDocument:
         Statement:
         - Action: ['sts:AssumeRole']
@@ -218,7 +229,7 @@ Resources:
         Version: '2012-10-17'
       Path: /
       Policies:
-        - PolicyName: CodePipelineAccess
+        - PolicyName: sebcel-activity-log-backend-pipeline-policy
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
