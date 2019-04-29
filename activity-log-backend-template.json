@@ -1,0 +1,84 @@
+{
+    "AWSTemplateFormatVersion" : "2010-09-09",
+    "Description": "Creates resources for Activity Log backend components.",
+	"Parameters" : {
+		"Environment" : {
+			"Type" : "String",
+			"AllowedValues" : ["test", "prod"]
+		}
+	},
+    "Resources" : {
+    	"ActivitiesTable": {
+    		"Type": "AWS::DynamoDB::Table",
+    		"Properties": {
+    			"TableName": {"Fn::Sub": "activity-log-activities-${Environment}-table"},
+    			"KeySchema": [
+    				{"AttributeName": "id", "KeyType": "HASH"}
+    			],
+				"AttributeDefinitions" : [
+			        {
+			            "AttributeName" : "id",
+			            "AttributeType" : "S"   
+			        }
+			    ],
+			    "ProvisionedThroughput": {
+			    	"ReadCapacityUnits": 5,
+			    	"WriteCapacityUnits": 5
+			    },
+    			"Tags": [
+                    {"Key": "sc:application", "Value": "Activity Log"},
+    				{"Key": "sc:functionality:area", "Value": "Activities"},
+                    {"Key": "sc:environment", "Value": {"Fn::Sub": "${Environment"}}
+    			]
+    		}
+    	},
+    	"DutiesTable": {
+    		"Type": "AWS::DynamoDB::Table",
+    		"Properties": {
+    			"TableName": {"Fn::Sub": "activity-log-duties-${Environment}-table"},
+    			"KeySchema": [
+    				{"AttributeName": "id", "KeyType": "HASH"}
+    			],
+				"AttributeDefinitions" : [
+			        {
+			            "AttributeName" : "id",
+			            "AttributeType" : "S"   
+			        }
+			    ],
+			    "ProvisionedThroughput": {
+			    	"ReadCapacityUnits": 5,
+			    	"WriteCapacityUnits": 5
+			    },
+			    "Tags": [
+                    {"Key": "sc:application", "Value": "Activity Log"},
+                    {"Key": "sc:functionality:area", "Value": "Duties"},
+                    {"Key": "sc:environment", "Value": {"Fn::Sub": "${Environment"}}
+    			]
+    		}
+    	},
+        "DutyTypesTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+                "TableName": {"Fn::Sub": "activity-log-duty-types-${Environment}-table"},
+                "KeySchema": [
+                    {"AttributeName": "id", "KeyType": "HASH"}
+                ],
+                "AttributeDefinitions" : [
+                    {
+                        "AttributeName" : "id",
+                        "AttributeType" : "S"   
+                    }
+                ],
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": 5,
+                    "WriteCapacityUnits": 5
+                },
+                "Tags": [
+                    {"Key": "sc:application", "Value": "Activity Log"},
+                    {"Key": "sc:functionality:area", "Value": "Duties"},
+                    {"Key": "sc:environment", "Value": {"Fn::Sub": "${Environment"}}
+                ]
+            }
+        }
+    }
+}
