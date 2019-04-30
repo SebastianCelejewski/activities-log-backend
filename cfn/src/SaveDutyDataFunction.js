@@ -1,5 +1,4 @@
 var AWS = require('aws-sdk');
-AWS.config.update({region: 'eu-central-1'});
 
 var ddb = new AWS.DynamoDB({apiVersion: '2012-10-08'});
 
@@ -25,7 +24,7 @@ var validateInputData = function(user, date, dutyType, status) {
 
 var checkIfDutyTypeIsValid = function(dutyType, onValid, onInvalid, onError) {
     var params = {
-        TableName: "duty-types-dev",
+        TableName: process.env.dutyTypesTableName,
         FilterExpression: "#t = :val",
         ExpressionAttributeNames: { "#t" : "type"},
         ExpressionAttributeValues: { ":val" : {"S": dutyType}}
@@ -51,7 +50,7 @@ var createNewDutyType = function(user, date, dutyType, status, callback) {
     console.log("Id for new duty type is " + dutyId);
 
     var params = {
-        TableName: 'duties-dev',
+        TableName: process.env.dutiesTableName,
         Item: {
             'id' : {S: dutyId},
             'user' : {S: user},

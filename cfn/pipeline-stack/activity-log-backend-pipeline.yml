@@ -155,6 +155,7 @@ Resources:
               Configuration:
                 ActionMode: CHANGE_SET_REPLACE
                 RoleArn: !GetAtt [CFNRole, Arn]
+                Capabilities: CAPABILITY_IAM
                 StackName: !Ref ProdStackName
                 ChangeSetName: !Ref ChangeSetName
                 TemplateConfiguration: !Sub "TemplateSource::${ProdStackConfig}"
@@ -200,22 +201,31 @@ Resources:
             Version: '2012-10-17'
             Statement:
               - Action:
-                - 'dynamodb:DescribeTable'
-                - 'dynamodb:CreateTable'
-                - 'dynamodb:DeleteTable'
                 - 'iam:CreateRole'
                 - 'iam:GetRole'
                 - 'iam:DeleteRole'
                 - 'iam:PassRole'
                 - 'iam:PutRolePolicy'
                 - 'iam:DeleteRolePolicy'
+                - 'dynamodb:DescribeTable'
+                - 'dynamodb:CreateTable'
+                - 'dynamodb:DeleteTable'
+                - 'dynamodb:ListTagsOfResource'
+                - 'dynamodb:TagResource'
+                - 'dynamodb:UntagResource'
                 - 'lambda:CreateFunction'
+                - 'lambda:DeleteFunction'
+                - 'lambda:GetFunction'
+                - 'lambda:UpdateFunctionConfiguration'
+                - 'lambda:ListTags'
+                - 'lambda:TagResource'
+                - 'lambda:UntagResource'
                 Effect: Allow
                 Resource: '*'
               - Action:
-                - 's3:GetObject'
+                - 's3:*'
                 Effect: Allow
-                Resource: 'arn:aws:s3:::sebcel-activity-log-backend-sources/*'              
+                Resource: '*'
   PipelineRole:
     Type: AWS::IAM::Role
     Properties:

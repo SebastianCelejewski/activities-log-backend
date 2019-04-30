@@ -1,8 +1,6 @@
 var AWS = require('aws-sdk');
 var uuid = require('uuid/v1');
 
-AWS.config.update({region: 'eu-central-1'});
-
 var ddb = new AWS.DynamoDB({apiVersion: '2012-10-08'});
 
 var checkIfDutyTypeNameIsProvided = function(dutyTypeName) {
@@ -19,7 +17,7 @@ var createNewDutyType = function(dutyTypeName, callback) {
     console.log("Id for new duty type is " + dutyId);
 
     var params = {
-        TableName: "duty-types-dev",
+        TableName: process.env.tableName,
         Item: {
             'id' : {S: dutyId},
             'type' : {S: dutyTypeName}

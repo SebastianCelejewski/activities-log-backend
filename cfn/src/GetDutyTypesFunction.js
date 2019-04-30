@@ -1,10 +1,10 @@
 var AWS = require('aws-sdk');
-AWS.config.update({region: 'eu-central-1'});
+
 var ddb = new AWS.DynamoDB({apiVersion: '2012-10-08'});
 
 exports.handler = function (event, context, callback) {
     var params = {
-        TableName: "duty-types-dev"
+        TableName: process.env.tableName
     }
     
     ddb.scan(params, function(err, data) {

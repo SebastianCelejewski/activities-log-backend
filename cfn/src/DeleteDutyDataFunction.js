@@ -1,5 +1,4 @@
 var AWS = require('aws-sdk');
-AWS.config.update({region: 'eu-central-1'});
 
 var ddb = new AWS.DynamoDB({apiVersion: '2012-10-08'});
 
@@ -24,7 +23,7 @@ var deleteDuty = function(user, date, dutyType, callback) {
     console.log("Id for new duty type is " + dutyId);
 
     var params = {
-        TableName: 'duties-dev',
+        TableName: process.env.tableName,
         Key: {
             'id' : {S: dutyId}
         }

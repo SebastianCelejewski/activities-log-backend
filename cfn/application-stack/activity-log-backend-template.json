@@ -28,7 +28,7 @@
     			"Tags": [
                     {"Key": "sc:application", "Value": "Activity Log"},
     				{"Key": "sc:functionality:area", "Value": "Activities"},
-                    {"Key": "sc:environment", "Value": {"Fn::Sub": "${Environment"}}
+                    {"Key": "sc:environment", "Value": {"Fn::Sub": "${Environment}"}}
     			]
     		}
     	},
@@ -52,7 +52,7 @@
 			    "Tags": [
                     {"Key": "sc:application", "Value": "Activity Log"},
                     {"Key": "sc:functionality:area", "Value": "Duties"},
-                    {"Key": "sc:environment", "Value": {"Fn::Sub": "${Environment"}}
+                    {"Key": "sc:environment", "Value": {"Fn::Sub": "${Environment}"}}
     			]
     		}
     	},
@@ -76,78 +76,134 @@
                 "Tags": [
                     {"Key": "sc:application", "Value": "Activity Log"},
                     {"Key": "sc:functionality:area", "Value": "Duties"},
-                    {"Key": "sc:environment", "Value": {"Fn::Sub": "${Environment"}}
+                    {"Key": "sc:environment", "Value": {"Fn::Sub": "${Environment}"}}
                 ]
             }
         },
         "CreateDutyTypeFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
+                "FunctionName": {"Fn::Sub": "activity-log-create-duty-type-${Environment}-function"},
                 "Code": {
                     "S3Bucket": "sebcel-activity-log-backend-sources",
-                    "S3Key": "CreateDutyTypeFunction.js"
+                    "S3Key": "CreateDutyTypeFunction.zip"
                 },
-                "Handler": "index.handler",
+                "Environment": {
+                    "Variables": {
+                        "tableName": { "Ref": "DutyTypesTable"}
+                    }
+                },
+                "Handler": "CreateDutyTypeFunction.handler",
                 "Runtime": "nodejs8.10",
                 "Timeout": 60,
                 "MemorySize": 128,
-                "Role": { "Fn::GetAtt": ["LambdaExecutionRole", "Arn"]}
+                "Role": { "Fn::GetAtt": ["LambdaExecutionRole", "Arn"]},
+                "Tags": [
+                    {"Key": "sc:application", "Value": "Activity Log"},
+                    {"Key": "sc:functionality:area", "Value": "Duties"},
+                    {"Key": "sc:environment", "Value": {"Fn::Sub": "${Environment}"}}
+                ]
             }
         },
         "GetDutyTypesFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
+                "FunctionName": {"Fn::Sub": "activity-log-get-duty-types-${Environment}-function"},
                 "Code": {
                     "S3Bucket": "sebcel-activity-log-backend-sources",
-                    "S3Key": "GetDutyTypesFunction.js"
+                    "S3Key": "GetDutyTypesFunction.zip"
                 },
-                "Handler": "index.handler",
+                "Environment": {
+                    "Variables": {
+                        "tableName": { "Ref": "DutyTypesTable"}
+                    }
+                },
+                "Handler": "GetDutyTypesFunction.handler",
                 "Runtime": "nodejs8.10",
                 "Timeout": 60,
                 "MemorySize": 128,
-                "Role": { "Fn::GetAtt": ["LambdaExecutionRole", "Arn"]}
+                "Role": { "Fn::GetAtt": ["LambdaExecutionRole", "Arn"]},
+                "Tags": [
+                    {"Key": "sc:application", "Value": "Activity Log"},
+                    {"Key": "sc:functionality:area", "Value": "Duties"},
+                    {"Key": "sc:environment", "Value": {"Fn::Sub": "${Environment}"}}
+                ]
             }
         },
         "GetDutiesFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
+                "FunctionName": {"Fn::Sub": "activity-log-get-duties-${Environment}-function"},
                 "Code": {
                     "S3Bucket": "sebcel-activity-log-backend-sources",
-                    "S3Key": "GetDutiesFunction.js"
+                    "S3Key": "GetDutiesFunction.zip"
                 },
-                "Handler": "index.handler",
+                "Environment": {
+                    "Variables": {
+                        "tableName": { "Ref": "DutiesTable"}
+                    }
+                },
+                "Handler": "GetDutiesFunction.handler",
                 "Runtime": "nodejs8.10",
                 "Timeout": 60,
                 "MemorySize": 128,
-                "Role": { "Fn::GetAtt": ["LambdaExecutionRole", "Arn"]}
+                "Role": { "Fn::GetAtt": ["LambdaExecutionRole", "Arn"]},
+                "Tags": [
+                    {"Key": "sc:application", "Value": "Activity Log"},
+                    {"Key": "sc:functionality:area", "Value": "Duties"},
+                    {"Key": "sc:environment", "Value": {"Fn::Sub": "${Environment}"}}
+                ]
             }
         },
         "SaveDutyDataFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
+                "FunctionName": {"Fn::Sub": "activity-log-save-duty-data-${Environment}-function"},
                 "Code": {
                     "S3Bucket": "sebcel-activity-log-backend-sources",
-                    "S3Key": "SaveDutyDataFunction.js"
+                    "S3Key": "SaveDutyDataFunction.zip"
                 },
-                "Handler": "index.handler",
+                "Environment": {
+                    "Variables": {
+                        "dutiesTableName": { "Ref": "DutiesTable"},
+                        "dutyTypesTableName": { "Ref": "DutyTypesTable"}
+                    }
+                },
+                "Handler": "SaveDutyDataFunction.handler",
                 "Runtime": "nodejs8.10",
                 "Timeout": 60,
                 "MemorySize": 128,
-                "Role": { "Fn::GetAtt": ["LambdaExecutionRole", "Arn"]}
+                "Role": { "Fn::GetAtt": ["LambdaExecutionRole", "Arn"]},
+                "Tags": [
+                    {"Key": "sc:application", "Value": "Activity Log"},
+                    {"Key": "sc:functionality:area", "Value": "Duties"},
+                    {"Key": "sc:environment", "Value": {"Fn::Sub": "${Environment}"}}
+                ]
             }
         },
         "DeleteDutyDataFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
+                "FunctionName": {"Fn::Sub": "activity-log-delete-duty-data-${Environment}-function"},
                 "Code": {
                     "S3Bucket": "sebcel-activity-log-backend-sources",
-                    "S3Key": "DeleteDutyDataFunction.js"
+                    "S3Key": "DeleteDutyDataFunction.zip"
                 },
-                "Handler": "index.handler",
+                "Environment": {
+                    "Variables": {
+                        "tableName": { "Ref": "DutiesTable"}
+                    }
+                },
+                "Handler": "DeleteDutyDataFunction.handler",
                 "Runtime": "nodejs8.10",
                 "Timeout": 60,
                 "MemorySize": 128,
-                "Role": { "Fn::GetAtt": ["LambdaExecutionRole", "Arn"]}
+                "Role": { "Fn::GetAtt": ["LambdaExecutionRole", "Arn"]},
+                "Tags": [
+                    {"Key": "sc:application", "Value": "Activity Log"},
+                    {"Key": "sc:functionality:area", "Value": "Duties"},
+                    {"Key": "sc:environment", "Value": {"Fn::Sub": "${Environment}"}}
+                ]
             }
         },
         "LambdaExecutionRole": {
