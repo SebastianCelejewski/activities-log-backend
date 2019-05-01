@@ -526,6 +526,50 @@
                     }
                 ]
             }
+        },
+        "AddActivityForUser": {
+            "Type":"AWS::ApiGateway::Method",
+            "Properties": {
+                "RestApiId": {"Ref": "ActivityLogApi"},
+                "ResourceId": {"Ref": "ActivitiesResource"},
+                "HttpMethod": "POST",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                    "Type": "AWS",
+                    "IntegrationHttpMethod": "POST",
+                    "Credentials": { "Fn::GetAtt": ["ApiGatewayExecutionRole", "Arn"]},
+                    "Uri": "arn:aws:apigateway:eu-west-1:dynamodb:action/PutItem",
+                    "PassthroughBehavior": "NEVER",
+                    "RequestTemplates": {
+                        "application/json": {"Fn::Join": ["", [
+                                "#set($inputRoot = $input.path('$')) { \"TableName\":\"",
+                                {"Ref": "ActivitiesTable"},
+                                "\", \"Item\": { \"id\": { \"S\": \"${inputRoot.id}\" }, \"date\": { \"S\": \"${inputRoot.date}\" }, \"type\": { \"S\": \"${inputRoot.type}\" }, \"user\": { \"S\": \"${inputRoot.user}\" }, \"description\": { \"S\": \"${inputRoot.description}\" }, \"duration\": { \"N\": \"${inputRoot.duration}\"} } }"
+                            ]]
+                        } 
+                    },
+                    "IntegrationResponses": [
+                        {
+                            "StatusCode": "200",
+                            "ResponseTemplates": {
+                                "application/json": ""
+                            },
+                            "ResponseParameters": {
+                                "method.response.header.Access-Control-Allow-Origin": "'*'"
+                            }
+                        }
+                    ]
+                },
+                "MethodResponses": [
+                    {
+                        "StatusCode": "200",
+                        "ResponseParameters": {
+                            "method.response.header.Access-Control-Allow-Origin": "true"
+                        }
+                    }
+                ]
+            }
         }
+
     }
 }

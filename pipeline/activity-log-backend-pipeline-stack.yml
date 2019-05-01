@@ -144,7 +144,7 @@ Resources:
               Configuration:
                 ActionMode: CHANGE_SET_REPLACE
                 RoleArn: !GetAtt [CFNRole, Arn]
-                Capabilities: CAPABILITY_IAM
+                Capabilities: CAPABILITY_NAMED_IAM
                 StackName: !Ref ProdStackName
                 ChangeSetName: !Ref ChangeSetName
                 TemplateConfiguration: !Sub "TemplateSource::${ProdStackConfig}"
