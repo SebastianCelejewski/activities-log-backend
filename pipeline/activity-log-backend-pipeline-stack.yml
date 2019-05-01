@@ -116,7 +116,7 @@ Resources:
               Configuration:
                 ActionMode: REPLACE_ON_FAILURE
                 RoleArn: !GetAtt [CFNRole, Arn]
-                Capabilities: CAPABILITY_IAM
+                Capabilities: CAPABILITY_NAMED_IAM
                 StackName: !Ref TestStackName
                 TemplateConfiguration: !Sub "TemplateSource::${TestStackConfig}"
                 TemplatePath: !Sub "TemplateSource::${TemplateFileName}"
