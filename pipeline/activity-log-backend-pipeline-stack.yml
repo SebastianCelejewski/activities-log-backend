@@ -131,17 +131,6 @@ Resources:
                 NotificationArn: !Ref CodePipelineSNSTopic
                 CustomData: !Sub 'Do you want to create a change set against the production stack and delete the ${TestStackName} stack?'
               RunOrder: '2'
-            - Name: DeleteTestStack
-              ActionTypeId:
-                Category: Deploy
-                Owner: AWS
-                Provider: CloudFormation
-                Version: '1'
-              Configuration:
-                ActionMode: DELETE_ONLY
-                RoleArn: !GetAtt [CFNRole, Arn]
-                StackName: !Ref TestStackName
-              RunOrder: '3'
         - Name: ProdStage
           Actions:
             - Name: CreateChangeSet
