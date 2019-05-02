@@ -200,7 +200,7 @@
         "LambdaExecutionRole": {
             "Type": "AWS::IAM::Role",
             "Properties": {
-                "RoleName": "activity-log-lambda-execution-role",
+                "RoleName": {"Fn::Sub": "sebcel-activity-log-${Environment}-lambda-execution-role"},
                 "AssumeRolePolicyDocument": {
                     "Version": "2012-10-17",
                     "Statement": [
@@ -222,7 +222,7 @@
             ],
             "Type": "AWS::IAM::Policy",
             "Properties": {
-                "PolicyName": "sebcel-activity-log-lambda-execution-policy",
+                "PolicyName": {"Fn::Sub": "sebcel-activity-log-${Environment}-lambda-execution-policy"},
                 "Roles": [
                     {"Ref": "LambdaExecutionRole"}
                 ],
@@ -255,7 +255,7 @@
         "ApiGatewayExecutionRole": {
             "Type": "AWS::IAM::Role",
             "Properties": {
-                "RoleName": "activity-log-apigateway-execution-role",
+                "RoleName": {"Fn::Sub": "sebcel-activity-log-${Environment}-apigateway-execution-role"},
                 "AssumeRolePolicyDocument": {
                     "Version": "2012-10-17",
                     "Statement": [
@@ -277,7 +277,7 @@
             ],
             "Type": "AWS::IAM::Policy",
             "Properties": {
-                "PolicyName": "sebcel-activity-log-apigateway-execution-policy",
+                "PolicyName": {"Fn::Sub": "sebcel-activity-log-${Environment}-apigateway-execution-policy"},
                 "Roles": [
                     {"Ref": "ApiGatewayExecutionRole"}
                 ],
@@ -309,7 +309,10 @@
                                 "lambda:InvokeFunction"
                             ],
                             "Resource": [
-                                { "Fn::GetAtt": ["GetDutyTypesFunction", "Arn"]}
+                                { "Fn::GetAtt": ["GetDutyTypesFunction", "Arn"]},
+                                { "Fn::GetAtt": ["GetDutiesFunction", "Arn"]},
+                                { "Fn::GetAtt": ["SaveDutyDataFunction", "Arn"]},
+                                { "Fn::GetAtt": ["DeleteDutyDataFunction", "Arn"]}
                             ]
                         }
                     ]
@@ -442,7 +445,7 @@
                             "StatusCode": "200",
                             "ResponseParameters": {
                                 "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
-                                "method.response.header.Access-Control-Allow-Methods": "'GET,POST,OPTIONS'",
+                                "method.response.header.Access-Control-Allow-Methods": "'GET,POST,DELETE,OPTIONS'",
                                 "method.response.header.Access-Control-Allow-Origin": "'*'"
                             }
                         }
@@ -629,9 +632,6 @@
                 "ResourceId": {"Ref": "DutyTypesResource"},
                 "HttpMethod": "GET",
                 "AuthorizationType": "NONE",
-                "RequestParameters": {
-                    "method.request.querystring.user": "true"
-                },
                 "Integration": {
                     "Type": "AWS",
                     "IntegrationHttpMethod": "POST",
@@ -653,6 +653,129 @@
                             "ResponseTemplates": {
                                 "application/json": "#set($inputRoot = $input.path('$')) [#foreach($elem in $inputRoot.Items) \"$elem.type.S\" #if($foreach.hasNext),#end #end ]"
                             },
+                            "ResponseParameters": {
+                                "method.response.header.Access-Control-Allow-Origin": "'*'"
+                            }
+                        }
+                    ]
+                },
+                "MethodResponses": [
+                    {
+                        "StatusCode": "200",
+                        "ResponseParameters": {
+                            "method.response.header.Access-Control-Allow-Origin": "true"
+                        }
+                    }
+                ]
+            }
+        },
+        "GetDuties": {
+            "Type":"AWS::ApiGateway::Method",
+            "Properties": {
+                "RestApiId": {"Ref": "ActivityLogApi"},
+                "ResourceId": {"Ref": "DutiesResource"},
+                "HttpMethod": "GET",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                    "Type": "AWS_PROXY",
+                    "IntegrationHttpMethod": "POST",
+                    "Credentials": { "Fn::GetAtt": ["ApiGatewayExecutionRole", "Arn"]},
+                    "Uri": { "Fn::Join":[ "", [
+                            "arn:aws:apigateway:",
+                            {"Ref" : "AWS::Region"},
+                            ":lambda:path/2015-03-31/functions/",
+                            {"Fn::GetAtt": ["GetDutiesFunction", "Arn"]},
+                            "/invocations"
+                        ]]},
+                    "PassthroughBehavior": "NEVER",
+                    "RequestTemplates": {
+                        "application/json": ""
+                    },
+                    "IntegrationResponses": [
+                        {
+                            "StatusCode": "200",
+                            "ResponseParameters": {
+                                "method.response.header.Access-Control-Allow-Origin": "'*'"
+                            }
+                        }
+                    ]
+                },
+                "MethodResponses": [
+                    {
+                        "StatusCode": "200",
+                        "ResponseParameters": {
+                            "method.response.header.Access-Control-Allow-Origin": "true"
+                        }
+                    }
+                ]
+            }
+        },
+        "SaveDutyData": {
+            "Type":"AWS::ApiGateway::Method",
+            "Properties": {
+                "RestApiId": {"Ref": "ActivityLogApi"},
+                "ResourceId": {"Ref": "DutiesResource"},
+                "HttpMethod": "POST",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                    "Type": "AWS_PROXY",
+                    "IntegrationHttpMethod": "POST",
+                    "Credentials": { "Fn::GetAtt": ["ApiGatewayExecutionRole", "Arn"]},
+                    "Uri": { "Fn::Join":[ "", [
+                            "arn:aws:apigateway:",
+                            {"Ref" : "AWS::Region"},
+                            ":lambda:path/2015-03-31/functions/",
+                            {"Fn::GetAtt": ["SaveDutyDataFunction", "Arn"]},
+                            "/invocations"
+                        ]]},
+                    "PassthroughBehavior": "NEVER",
+                    "RequestTemplates": {
+                        "application/json": ""
+                    },
+                    "IntegrationResponses": [
+                        {
+                            "StatusCode": "200",
+                            "ResponseParameters": {
+                                "method.response.header.Access-Control-Allow-Origin": "'*'"
+                            }
+                        }
+                    ]
+                },
+                "MethodResponses": [
+                    {
+                        "StatusCode": "200",
+                        "ResponseParameters": {
+                            "method.response.header.Access-Control-Allow-Origin": "true"
+                        }
+                    }
+                ]
+            }
+        },
+        "DeleteDutyData": {
+            "Type":"AWS::ApiGateway::Method",
+            "Properties": {
+                "RestApiId": {"Ref": "ActivityLogApi"},
+                "ResourceId": {"Ref": "DutiesResource"},
+                "HttpMethod": "DELETE",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                    "Type": "AWS_PROXY",
+                    "IntegrationHttpMethod": "POST",
+                    "Credentials": { "Fn::GetAtt": ["ApiGatewayExecutionRole", "Arn"]},
+                    "Uri": { "Fn::Join":[ "", [
+                            "arn:aws:apigateway:",
+                            {"Ref" : "AWS::Region"},
+                            ":lambda:path/2015-03-31/functions/",
+                            {"Fn::GetAtt": ["DeleteDutyDataFunction", "Arn"]},
+                            "/invocations"
+                        ]]},
+                    "PassthroughBehavior": "NEVER",
+                    "RequestTemplates": {
+                        "application/json": ""
+                    },
+                    "IntegrationResponses": [
+                        {
+                            "StatusCode": "200",
                             "ResponseParameters": {
                                 "method.response.header.Access-Control-Allow-Origin": "'*'"
                             }
