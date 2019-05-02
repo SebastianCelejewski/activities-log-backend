@@ -527,7 +527,7 @@
                 ]
             }
         },
-        "AddActivityForUser": {
+        "AddActivity": {
             "Type":"AWS::ApiGateway::Method",
             "Properties": {
                 "RestApiId": {"Ref": "ActivityLogApi"},
@@ -569,7 +569,49 @@
                     }
                 ]
             }
+        },
+        "DeleteActivity": {
+            "Type":"AWS::ApiGateway::Method",
+            "Properties": {
+                "RestApiId": {"Ref": "ActivityLogApi"},
+                "ResourceId": {"Ref": "ActivityResource"},
+                "HttpMethod": "DELETE",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                    "Type": "AWS",
+                    "IntegrationHttpMethod": "POST",
+                    "Credentials": { "Fn::GetAtt": ["ApiGatewayExecutionRole", "Arn"]},
+                    "Uri": "arn:aws:apigateway:eu-west-1:dynamodb:action/DeleteItem",
+                    "PassthroughBehavior": "NEVER",
+                    "RequestTemplates": {
+                        "application/json": {"Fn::Join": ["", [
+                                "{ \"TableName\": \"",
+                                {"Ref": "ActivitiesTable"},
+                                "\", \"Key\": { \"id\": { \"S\": \"${method.request.path.id}\" } } } "
+                            ]]
+                        } 
+                    },
+                    "IntegrationResponses": [
+                        {
+                            "StatusCode": "200",
+                            "ResponseTemplates": {
+                                "application/json": ""
+                            },
+                            "ResponseParameters": {
+                                "method.response.header.Access-Control-Allow-Origin": "'*'"
+                            }
+                        }
+                    ]
+                },
+                "MethodResponses": [
+                    {
+                        "StatusCode": "200",
+                        "ResponseParameters": {
+                            "method.response.header.Access-Control-Allow-Origin": "true"
+                        }
+                    }
+                ]
+            }
         }
-
     }
 }
