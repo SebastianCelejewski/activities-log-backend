@@ -206,6 +206,7 @@ Resources:
                 - 'lambda:CreateFunction'
                 - 'lambda:DeleteFunction'
                 - 'lambda:GetFunction'
+                - 'lambda:GetFunctionConfiguration'
                 - 'lambda:UpdateFunctionConfiguration'
                 - 'lambda:ListTags'
                 - 'lambda:TagResource'
