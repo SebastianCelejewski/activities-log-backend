@@ -791,6 +791,30 @@
                     }
                 ]
             }
+        },
+        "UserPool" :
+        {
+            "Type": "AWS::Cognito::UserPool",
+            "Properties": {
+                "UserPoolName": {"Fn::Sub": "activity-log-${Environment}-user-pool"},
+                "UserPoolTags": {
+                    "sc:application": "Activity Log",
+                    "sc:functionality:area": "User management",
+                    "sc:environment": {"Fn::Sub": "${Environment}"}
+                },
+                "AdminCreateUserConfig": {
+                    "AllowAdminCreateUserOnly": true
+                },
+                "Policies": {
+                    "PasswordPolicy": {
+                        "MinimumLength" : 6,
+                        "RequireLowercase" : false,
+                        "RequireNumbers" : false,
+                        "RequireSymbols" : false,
+                        "RequireUppercase" : false
+                    }
+                }
+            }
         }
     }
 }

@@ -216,6 +216,9 @@ Resources:
                 - 'apigateway:DELETE'
                 - 'apigateway:UpdateRestApiPolicy'
                 - 'apigateway:GET'
+                - 'cognito-idp:DescribeUserPool'
+                - 'cognito-idp:CreateUserPool'
+                - 'cognito-idp:UpdateUserPool'
                 Effect: Allow
                 Resource: '*'
               - Action:
