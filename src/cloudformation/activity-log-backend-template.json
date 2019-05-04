@@ -855,7 +855,14 @@
                 "AccessLogSetting" : {
                     "DestinationArn": {"Fn::GetAtt": ["AccessLogGroup", "Arn"]},
                     "Format": "$context.requestTime $context.requestId $context.identity.sourceIp $context.protocol $context.path $context.httpMethod $context.identity.caller $context.error.message"
-                }
+                },
+                "MethodSettings": [{
+                    "ResourcePath": "/*",
+                    "HttpMethod": "*",
+                    "LoggingLevel": "INFO",
+                    "ThrottlingBurstLimit": 10,
+                    "ThrottlingRateLimit": 10
+                }]
             }
         },
         "AccessLogGroup": {
