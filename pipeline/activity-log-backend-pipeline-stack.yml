@@ -219,6 +219,10 @@ Resources:
                 - 'cognito-idp:DescribeUserPool'
                 - 'cognito-idp:CreateUserPool'
                 - 'cognito-idp:UpdateUserPool'
+                - 'cognito-idp:DeleteUserPool'
+                - 'cognito-idp:CreateUserPoolClient'
+                - 'cognito-idp:DeleteUserPoolClient'
+                - 'cognito-idp:UpdateUserPoolClient'
                 Effect: Allow
                 Resource: '*'
               - Action:

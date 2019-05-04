@@ -792,8 +792,7 @@
                 ]
             }
         },
-        "UserPool" :
-        {
+        "UserPool": {
             "Type": "AWS::Cognito::UserPool",
             "Properties": {
                 "UserPoolName": {"Fn::Sub": "activity-log-${Environment}-user-pool"},
@@ -814,6 +813,23 @@
                         "RequireUppercase" : false
                     }
                 }
+            }
+        },
+        "UserPoolAppClient": {
+            "Type": "AWS::Cognito::UserPoolClient",
+            "Properties": {
+                "ClientName": {"Fn::Sub": "activity-log-${Environment}-app-client"},
+                "UserPoolId": {"Ref": "UserPool"}
+            }
+        },
+        "CognitoAuthorizer": {
+            "Type": "AWS::ApiGateway::Authorizer",
+            "Properties": {
+                "Name": {"Fn::Sub": "activity-log-${Environment}-cognito-authorizer"},
+                "Type": "COGNITO_USER_POOLS",
+                "RestApiId": {"Ref": "ActivityLogApi"},
+                "IdentitySource": "method.request.header.Authorization",
+                "ProviderARNs": [{"Fn::GetAtt": ["UserPool", "Arn"]}]
             }
         }
     }
