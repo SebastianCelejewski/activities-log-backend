@@ -214,8 +214,9 @@ Resources:
                 - 'apigateway:PUT'
                 - 'apigateway:POST'
                 - 'apigateway:DELETE'
-                - 'apigateway:UpdateRestApiPolicy'
                 - 'apigateway:GET'
+                - 'apigateway:PATCH'
+                - 'apigateway:UpdateRestApiPolicy'
                 - 'cognito-idp:DescribeUserPool'
                 - 'cognito-idp:CreateUserPool'
                 - 'cognito-idp:UpdateUserPool'
@@ -223,6 +224,10 @@ Resources:
                 - 'cognito-idp:CreateUserPoolClient'
                 - 'cognito-idp:DeleteUserPoolClient'
                 - 'cognito-idp:UpdateUserPoolClient'
+                - 'logs:DescribeLogGroups'
+                - 'logs:CreateLogGroup'
+                - 'logs:DeleteLogGroup'
+                - 'logs:PutRetentionPolicy'
                 Effect: Allow
                 Resource: '*'
               - Action:

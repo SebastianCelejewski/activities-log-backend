@@ -506,6 +506,7 @@
                 "HttpMethod": "GET",
                 "AuthorizationType": "COGNITO_USER_POOLS",
                 "AuthorizerId": {"Ref": "CognitoAuthorizer"},
+                "ApiKeyRequired": true,
                 "RequestParameters": {
                     "method.request.querystring.user": "true"
                 },
@@ -548,6 +549,7 @@
                 "HttpMethod": "POST",
                 "AuthorizationType": "COGNITO_USER_POOLS",
                 "AuthorizerId": {"Ref": "CognitoAuthorizer"},
+                "ApiKeyRequired": true,
                 "Integration": {
                     "Type": "AWS",
                     "IntegrationHttpMethod": "POST",
@@ -592,6 +594,7 @@
                 "HttpMethod": "DELETE",
                 "AuthorizationType": "COGNITO_USER_POOLS",
                 "AuthorizerId": {"Ref": "CognitoAuthorizer"},
+                "ApiKeyRequired": true,
                 "Integration": {
                     "Type": "AWS",
                     "IntegrationHttpMethod": "POST",
@@ -636,6 +639,7 @@
                 "HttpMethod": "GET",
                 "AuthorizationType": "COGNITO_USER_POOLS",
                 "AuthorizerId": {"Ref": "CognitoAuthorizer"},
+                "ApiKeyRequired": true,
                 "Integration": {
                     "Type": "AWS",
                     "IntegrationHttpMethod": "POST",
@@ -681,6 +685,7 @@
                 "HttpMethod": "GET",
                 "AuthorizationType": "COGNITO_USER_POOLS",
                 "AuthorizerId": {"Ref": "CognitoAuthorizer"},
+                "ApiKeyRequired": true,
                 "Integration": {
                     "Type": "AWS_PROXY",
                     "IntegrationHttpMethod": "POST",
@@ -723,6 +728,7 @@
                 "HttpMethod": "POST",
                 "AuthorizationType": "COGNITO_USER_POOLS",
                 "AuthorizerId": {"Ref": "CognitoAuthorizer"},
+                "ApiKeyRequired": true,
                 "Integration": {
                     "Type": "AWS_PROXY",
                     "IntegrationHttpMethod": "POST",
@@ -765,6 +771,7 @@
                 "HttpMethod": "DELETE",
                 "AuthorizationType": "COGNITO_USER_POOLS",
                 "AuthorizerId": {"Ref": "CognitoAuthorizer"},
+                "ApiKeyRequired": true,
                 "Integration": {
                     "Type": "AWS_PROXY",
                     "IntegrationHttpMethod": "POST",
@@ -797,6 +804,40 @@
                         }
                     }
                 ]
+            }
+        },
+        "DummyDeployment": {
+            "Type" : "AWS::ApiGateway::Deployment",
+            "Properties" : {
+                "Description" : "Initial deployment",
+                "RestApiId" : {"Ref": "ActivityLogApi"},
+                "StageName" : "dummy"
+            },
+            "DependsOn": "DeleteDutyData"
+        },
+        "DefaultStage": {
+            "Type": "AWS::ApiGateway::Stage",
+            "Properties": {
+                "RestApiId": {"Ref": "ActivityLogApi"},
+                "DeploymentId": {"Ref": "DummyDeployment"},
+                "StageName": "default",
+                "Description": "Default stage for Activity Log API",
+                "Tags": [
+                    {"Key": "sc:application", "Value": "Activity Log"},
+                    {"Key": "sc:environment", "Value": {"Fn::Sub": "${Environment}"}}
+                ],
+                "TracingEnabled": true,
+                "AccessLogSetting" : {
+                    "DestinationArn": {"Fn::GetAtt": ["AccessLogGroup", "Arn"]},
+                    "Format": "$context.requestTime $context.requestId $context.identity.sourceIp $context.protocol $context.path $context.httpMethod $context.identity.caller $context.error.message"
+                }
+            }
+        },
+        "AccessLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+                "LogGroupName": {"Fn::Sub": "activity-log-${Environment}-access-logs"},
+                "RetentionInDays": 90
             }
         },
         "UserPool": {
@@ -838,6 +879,67 @@
                 "IdentitySource": "method.request.header.Authorization",
                 "ProviderARNs": [{"Fn::GetAtt": ["UserPool", "Arn"]}]
             }
+        },
+        "WebAppUsagePlan": {
+            "Type": "AWS::ApiGateway::UsagePlan",
+            "Properties": {
+                "UsagePlanName": {"Fn::Sub": "activity-log-${Environment}-webapp-usage-plan"},
+                "Description": "Basic usage plan for Activity Log",
+                "ApiStages": [
+                    {
+                        "ApiId": {"Ref": "ActivityLogApi"},
+                        "Stage": {"Ref": "DefaultStage"}
+                    }
+                ],
+                "Quota": {
+                    "Limit": 100,
+                    "Period": "DAY"
+                },
+                "Throttle": {
+                    "BurstLimit": 10,
+                    "RateLimit": 5
+                }
+            }
+        },
+        "WebAppApiKey": {
+            "Type": "AWS::ApiGateway::ApiKey",
+            "Properties": {
+                "Name": {"Fn::Sub": "activity-log-${Environment}-webapp-api-key"},
+                "Description": "Default API key for the Activity Log webapp",
+                "Enabled": true,
+                "StageKeys": [
+                    {
+                        "RestApiId": {"Ref": "ActivityLogApi"},
+                        "StageName": {"Ref": "DefaultStage"}
+                    }
+                ]
+            }
+        },
+        "WebAppApiKeyUsagePlanAssociation": {
+            "Type": "AWS::ApiGateway::UsagePlanKey",
+            "Properties": {
+                "KeyId": {"Ref": "WebAppApiKey"},
+                "KeyType": "API_KEY",
+                "UsagePlanId": {"Ref": "WebAppUsagePlan"}
+            }
+        }
+    },
+    "Outputs": {
+        "ActivityLogCognitoUserPoolID": {
+            "Description": "Cognito User Pool id to be used with Cognito during authentication",
+            "Value": {"Ref": "UserPool"}
+        },
+        "ActivityLogCognitoUserPoolClientId": {
+            "Description": "Client id to be used with Cognito during authentication",
+            "Value": {"Ref": "UserPoolAppClient"}
+        },
+        "ActivityLogApiID": {
+            "Description": "Rest API identifier",
+            "Value": {"Ref": "ActivityLogApi"}
+        },
+        "ActivityLogApiKey": {
+            "Description": "API key to be used with API Gateway when calling methods",
+            "Value": {"Ref": "WebAppApiKey"}
         }
     }
 }
