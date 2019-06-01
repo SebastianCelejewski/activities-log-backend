@@ -4,6 +4,7 @@
   },
   "Tags" : {
   	"sc:application": "Activity Log",
+  	"sc:functionality:area": "Continuous Delivery",
   	"sc:environment": "test"
   },
   "StackPolicy": {
