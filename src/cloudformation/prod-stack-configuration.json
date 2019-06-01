@@ -5,5 +5,26 @@
   "Tags" : {
   	"sc:application": "Activity Log",
   	"sc:environment": "prod"
+  },
+  "StackPolicy": {
+  	"Statement": [
+  	  {
+  	  	"Effect": "Allow",
+  	  	"Action": "Update:*",
+  	  	"Principal": "*",
+  	  	"Resource": "*"
+  	  },
+  	  {
+  	  	"Effect": "Deny",
+  	  	"Action": "Update:Replace",
+  	  	"Principal": "*",
+  	  	"Resource": [
+  	  		"LogicalResourceId/ActivitiesTable",
+  	  		"LogicalResourceId/DutiesTable",
+  	  		"LogicalResourceId/DutyTypesTable",
+  	  		"LogicalResourceId/UserPool"
+  	  	]
+  	  }
+  	]
   }
 }
