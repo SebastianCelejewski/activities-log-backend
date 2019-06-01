@@ -1,5 +1,9 @@
 {
-  "Parameters" : {
+  "Parameters": {
   	"Environment": "prod"
+  },
+  "Tags" : {
+  	"sc:application": "Activity Log",
+  	"sc:environment": "prod"
   }
 }
